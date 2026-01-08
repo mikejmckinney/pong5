@@ -6,7 +6,7 @@ class ParticleSystem {
   constructor() {
     this.particles = [];
     this.particlePool = []; // Object pooling for performance
-    this.maxParticles = 100;
+    this.maxParticles = CONFIG.EFFECTS.MAX_PARTICLES;
     
     // Pre-create particle pool
     for (let i = 0; i < this.maxParticles; i++) {
@@ -131,7 +131,7 @@ class ParticleSystem {
       
       ctx.save();
       ctx.globalAlpha = alpha;
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = CONFIG.EFFECTS.PARTICLE_GLOW;
       ctx.shadowColor = particle.color;
       ctx.fillStyle = particle.color;
       

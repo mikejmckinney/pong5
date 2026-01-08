@@ -63,12 +63,12 @@ class Renderer {
     }
     
     // Draw horizontal lines with perspective
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < CONFIG.EFFECTS.GRID_HORIZONTAL_LINES; i++) {
       const y = perspectiveY + (i * gridSize) - this.gridOffset;
       if (y > this.canvas.height) continue;
       
       // Perspective scale
-      const scale = 1 - (i / 15);
+      const scale = 1 - (i / CONFIG.EFFECTS.GRID_PERSPECTIVE_SCALE);
       const alpha = Math.max(0.1, 0.4 - (i / 20));
       
       this.ctx.globalAlpha = alpha;
@@ -79,7 +79,7 @@ class Renderer {
     }
     
     // Draw vertical lines with perspective
-    const numVerticalLines = 12;
+    const numVerticalLines = CONFIG.EFFECTS.GRID_VERTICAL_LINES;
     for (let i = 0; i <= numVerticalLines; i++) {
       const x = (i / numVerticalLines) * this.canvas.width;
       const alpha = 0.3;
