@@ -55,13 +55,22 @@ const CONFIG = {
     PARTICLE_COUNT: 12,
     SCANLINES_ENABLED: true,
     GRID_ENABLED: true,
-    GLOW_ENABLED: true
+    GLOW_ENABLED: true,
+    PADDLE_GLOW_NORMAL: 20,
+    PADDLE_GLOW_ACTIVE: 30,
+    BALL_GLOW: 25,
+    SCORE_GLOW: 15,
+    GRID_SIZE: 40,
+    GRID_PERSPECTIVE_Y: 0.6,
+    PARTICLE_GRAVITY: 0.2,
+    PARTICLE_DRAG: 0.98
   },
   
   // Audio settings
   AUDIO: {
     ENABLED: true,
     VOLUME: 0.5,
-    MUTED: false
+    MUTED: false,
+    TONE_VOLUME_MULTIPLIER: 0.3
   }
 };

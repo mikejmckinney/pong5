@@ -107,9 +107,9 @@ class ParticleSystem {
       particle.y += particle.velocityY;
       
       // Apply gravity/drag
-      particle.velocityY += 0.2;
-      particle.velocityX *= 0.98;
-      particle.velocityY *= 0.98;
+      particle.velocityY += CONFIG.EFFECTS.PARTICLE_GRAVITY;
+      particle.velocityX *= CONFIG.EFFECTS.PARTICLE_DRAG;
+      particle.velocityY *= CONFIG.EFFECTS.PARTICLE_DRAG;
       
       // Update life
       particle.life -= dt / particle.maxLife;

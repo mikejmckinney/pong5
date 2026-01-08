@@ -42,8 +42,8 @@ class Renderer {
    * Draw animated synthwave grid background
    */
   drawGrid() {
-    const gridSize = 40;
-    const perspectiveY = this.canvas.height * 0.6; // Horizon line
+    const gridSize = CONFIG.EFFECTS.GRID_SIZE;
+    const perspectiveY = this.canvas.height * CONFIG.EFFECTS.GRID_PERSPECTIVE_Y; // Horizon line
     
     this.ctx.save();
     this.ctx.strokeStyle = CONFIG.COLORS.GRID_LINES;
@@ -139,7 +139,7 @@ class Renderer {
     }
     
     // Enhanced glow effect when paddle is actively controlled via touch
-    const glowIntensity = isActive ? 30 : 20;
+    const glowIntensity = isActive ? CONFIG.EFFECTS.PADDLE_GLOW_ACTIVE : CONFIG.EFFECTS.PADDLE_GLOW_NORMAL;
     const glowColor = isActive ? CONFIG.COLORS.NEON_PINK : CONFIG.COLORS.NEON_CYAN;
     
     // Draw multiple layers for stronger glow
@@ -202,7 +202,7 @@ class Renderer {
     }
     
     // Draw main ball with intense glow
-    this.ctx.shadowBlur = CONFIG.EFFECTS.GLOW_ENABLED ? 25 : 0;
+    this.ctx.shadowBlur = CONFIG.EFFECTS.GLOW_ENABLED ? CONFIG.EFFECTS.BALL_GLOW : 0;
     this.ctx.shadowColor = CONFIG.COLORS.NEON_PINK;
     
     // Gradient fill for ball
@@ -250,7 +250,7 @@ class Renderer {
     
     // Add glow effect to score
     if (CONFIG.EFFECTS.GLOW_ENABLED) {
-      this.ctx.shadowBlur = 15;
+      this.ctx.shadowBlur = CONFIG.EFFECTS.SCORE_GLOW;
       this.ctx.shadowColor = CONFIG.COLORS.NEON_CYAN;
     }
     
