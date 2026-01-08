@@ -99,7 +99,7 @@ class Renderer {
   drawScanlines() {
     this.ctx.save();
     this.ctx.globalAlpha = 0.05;
-    this.ctx.fillStyle = '#000000';
+    this.ctx.fillStyle = CONFIG.COLORS.BLACK;
     
     // Animate scanlines
     this.scanlineOffset += 0.5;
@@ -152,7 +152,7 @@ class Renderer {
       paddle.x + paddle.width, paddle.y
     );
     gradient.addColorStop(0, CONFIG.COLORS.NEON_CYAN);
-    gradient.addColorStop(0.5, '#ffffff');
+    gradient.addColorStop(0.5, CONFIG.COLORS.WHITE);
     gradient.addColorStop(1, CONFIG.COLORS.NEON_CYAN);
     
     this.ctx.fillStyle = gradient;
@@ -210,7 +210,7 @@ class Renderer {
       ball.x, ball.y, 0,
       ball.x, ball.y, ball.size / 2
     );
-    gradient.addColorStop(0, '#ffffff');
+    gradient.addColorStop(0, CONFIG.COLORS.WHITE);
     gradient.addColorStop(0.4, CONFIG.COLORS.NEON_PINK);
     gradient.addColorStop(1, CONFIG.COLORS.NEON_PURPLE);
     

@@ -46,7 +46,9 @@ const CONFIG = {
     PADDLE: '#00ffff',
     BALL: '#ff00ff',
     SCORE: '#ffffff',
-    CENTER_LINE: '#333333'
+    CENTER_LINE: '#333333',
+    WHITE: '#ffffff',
+    BLACK: '#000000'
   },
   
   // Visual effects settings
