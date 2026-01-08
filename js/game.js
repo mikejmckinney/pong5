@@ -43,7 +43,7 @@ class Game {
     this.winner = null;
     
     // Timing
-    this.lastTime = 0;
+    this.lastTime = null; // Will be set on first frame
     this.resetTimer = 0;
     this.isResetting = false;
     
@@ -53,6 +53,9 @@ class Game {
     // Track key states for one-time presses
     this.spaceWasPressed = false;
     this.escapeWasPressed = false;
+    
+    // Track previous ball position for collision detection
+    this.prevBallX = CONFIG.CANVAS_WIDTH / 2;
     
     // Start game loop
     this.run();
@@ -152,7 +155,10 @@ class Game {
     if (this.state === 'GAME_OVER') {
       if (this.controls.isSpacePressed() && !this.spaceWasPressed) {
         this.state = 'MENU';
+        // Preserve serve direction alternation across game sessions
+        const nextServeDirection = -this.serveDirection;
         this.resetGame();
+        this.serveDirection = nextServeDirection;
       }
       this.spaceWasPressed = this.controls.isSpacePressed();
       return;
@@ -202,6 +208,9 @@ class Game {
     // Update AI paddle
     this.ai.update(this.player2Paddle, this.ball, deltaTime);
 
+    // Store previous ball position for collision detection
+    this.prevBallX = this.ball.x;
+
     // Update ball position
     this.ball.x += this.ball.velocityX;
     this.ball.y += this.ball.velocityY;
@@ -217,6 +226,8 @@ class Game {
     }
 
     // Ball collision with paddles
+    // Note: At very high ball speeds (beyond BALL_MAX_SPEED), tunneling through
+    // paddles could occur. Current speed limits are safe for the canvas size.
     const ballRect = {
       x: this.ball.x - this.ball.size / 2,
       y: this.ball.y - this.ball.size / 2,
@@ -225,12 +236,18 @@ class Game {
     };
 
     // Check player 1 paddle collision
-    if (checkCollision(ballRect, this.player1Paddle) && this.ball.velocityX < 0) {
+    // Only register collision if ball is moving left AND was previously to the right of paddle
+    if (checkCollision(ballRect, this.player1Paddle) && 
+        this.ball.velocityX < 0 && 
+        this.prevBallX >= this.player1Paddle.x + this.player1Paddle.width) {
       this.handlePaddleCollision(this.player1Paddle);
     }
 
     // Check player 2 paddle collision
-    if (checkCollision(ballRect, this.player2Paddle) && this.ball.velocityX > 0) {
+    // Only register collision if ball is moving right AND was previously to the left of paddle
+    if (checkCollision(ballRect, this.player2Paddle) && 
+        this.ball.velocityX > 0 && 
+        this.prevBallX <= this.player2Paddle.x) {
       this.handlePaddleCollision(this.player2Paddle);
     }
 
@@ -285,6 +302,11 @@ class Game {
    * Main game loop
    */
   run(currentTime = 0) {
+    // Initialize lastTime on first frame
+    if (this.lastTime === null) {
+      this.lastTime = currentTime;
+    }
+
     // Calculate delta time in milliseconds
     const deltaTime = currentTime - this.lastTime;
     this.lastTime = currentTime;

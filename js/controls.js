@@ -15,7 +15,7 @@ class Controls {
       
       // Prevent default behavior for game keys
       if (['ArrowUp', 'ArrowDown', 'Space', 'Escape'].includes(e.code) ||
-          ['w', 's', ' ', 'escape'].includes(e.key.toLowerCase())) {
+          ['w', 's', ' '].includes(e.key.toLowerCase())) {
         e.preventDefault();
       }
     });
@@ -58,11 +58,5 @@ class Controls {
       }
     }
     return null;
-  }
-
-  // Clear a specific key (useful for one-time presses)
-  clearKey(key) {
-    this.keys[key] = false;
-    this.keys[key.toLowerCase()] = false;
   }
 }

@@ -5,10 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Retro Pong</title>
   <link rel="stylesheet" href="css/main.css">
+  <style>
+    /* Responsive canvas scaling for mobile devices */
+    #game-canvas {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+  </style>
 </head>
 <body>
   <div id="game-container">
-    <canvas id="game-canvas"></canvas>
+    <canvas id="game-canvas" aria-label="Retro Pong Game Canvas"></canvas>
   </div>
   
   <script src="js/config.js"></script>

@@ -41,7 +41,7 @@ class AI {
       this.reactionTimer = 0; // Reset timer when ball is not approaching
     } else {
       // Check if enough time has passed for reaction
-      if (this.reactionTimer > this.config.reactionDelay) {
+      if (this.reactionTimer >= this.config.reactionDelay) {
         this.reactionTimer = 0;
         
         // Calculate target position with error margin
