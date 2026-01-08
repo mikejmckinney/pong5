@@ -1,0 +1,148 @@
+/**
+ * Synthwave Animations for Retro Pong
+ */
+
+/* Title screen pulsing glow effect */
+@keyframes titlePulse {
+  0%, 100% {
+    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+    transform: scale(1);
+  }
+  50% {
+    text-shadow: 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff, 0 0 50px #ff00ff;
+    transform: scale(1.02);
+  }
+}
+
+/* Score pop animation on change */
+@keyframes scorePop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Scanline scrolling effect */
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* Button hover glow */
+@keyframes buttonGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, inset 0 0 5px rgba(0, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, inset 0 0 10px rgba(0, 255, 255, 0.4);
+  }
+}
+
+/* Game over celebration */
+@keyframes celebration {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  25% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(0deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+/* Fade in transition */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fade out transition */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Neon flicker effect */
+@keyframes neonFlicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;
+  }
+  20%, 24%, 55% {
+    opacity: 0.8;
+    text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+  }
+  22% {
+    opacity: 0.6;
+    text-shadow: none;
+  }
+}
+
+/* Particle burst */
+@keyframes particleBurst {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+/* Grid line pulse */
+@keyframes gridPulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Utility classes for applying animations */
+.animate-pulse {
+  animation: titlePulse 2s ease-in-out infinite;
+}
+
+.animate-score-pop {
+  animation: scorePop 0.3s ease-out;
+}
+
+.animate-celebration {
+  animation: celebration 0.6s ease-in-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.5s ease-out;
+}
+
+.animate-neon-flicker {
+  animation: neonFlicker 3s linear infinite;
+}

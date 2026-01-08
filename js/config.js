@@ -32,12 +32,36 @@ const CONFIG = {
     IMPOSSIBLE: { reactionDelay: 0, errorMargin: 0 }
   },
   
-  // Colors (initial retro theme)
+  // Colors (synthwave theme)
   COLORS: {
     BACKGROUND: '#0a0a0a',
+    SECONDARY_BG: '#1a1a2e',
+    NEON_PINK: '#ff00ff',
+    NEON_CYAN: '#00ffff',
+    NEON_PURPLE: '#bf00ff',
+    ELECTRIC_BLUE: '#0080ff',
+    HOT_ORANGE: '#ff6600',
+    GRID_LINES: '#330033',
+    TEXT_GLOW: '#ffffff',
     PADDLE: '#00ffff',
     BALL: '#ff00ff',
     SCORE: '#ffffff',
     CENTER_LINE: '#333333'
+  },
+  
+  // Visual effects settings
+  EFFECTS: {
+    BALL_TRAIL_LENGTH: 8,
+    PARTICLE_COUNT: 12,
+    SCANLINES_ENABLED: true,
+    GRID_ENABLED: true,
+    GLOW_ENABLED: true
+  },
+  
+  // Audio settings
+  AUDIO: {
+    ENABLED: true,
+    VOLUME: 0.5,
+    MUTED: false
   }
 };
