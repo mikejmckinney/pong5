@@ -213,7 +213,7 @@ class Game {
         
         // Smooth movement with dead zone
         if (Math.abs(diff) > 5) {
-          paddleMovement = clamp(diff * 0.2, -CONFIG.PADDLE_SPEED, CONFIG.PADDLE_SPEED);
+          paddleMovement = clamp(diff * CONFIG.TOUCH_SMOOTHING_FACTOR, -CONFIG.PADDLE_SPEED, CONFIG.PADDLE_SPEED);
         }
       }
     }

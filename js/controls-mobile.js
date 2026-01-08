@@ -53,7 +53,7 @@ class MobileControls {
     let lastTouchEnd = 0;
     document.addEventListener('touchend', (e) => {
       const now = Date.now();
-      if (now - lastTouchEnd <= 300) {
+      if (now - lastTouchEnd <= CONFIG.DOUBLE_TAP_PREVENT_MS) {
         e.preventDefault();
       }
       lastTouchEnd = now;
