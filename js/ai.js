@@ -5,7 +5,7 @@
 class AI {
   constructor(difficulty = 'MEDIUM') {
     this.setDifficulty(difficulty);
-    this.lastReactionTime = 0;
+    this.reactionTimer = 0;
     this.targetY = CONFIG.CANVAS_HEIGHT / 2;
     this.errorOffset = 0;
   }
@@ -29,7 +29,8 @@ class AI {
    * Update AI paddle position based on ball position
    */
   update(paddle, ball, deltaTime) {
-    const currentTime = Date.now();
+    // Accumulate time for reaction delay
+    this.reactionTimer += deltaTime;
     
     // Only react when ball is moving toward AI's side (right side)
     const isBallComingToward = ball.velocityX > 0;
@@ -37,10 +38,11 @@ class AI {
     if (!isBallComingToward) {
       // Move toward center when ball is not coming
       this.targetY = CONFIG.CANVAS_HEIGHT / 2;
+      this.reactionTimer = 0; // Reset timer when ball is not approaching
     } else {
       // Check if enough time has passed for reaction
-      if (currentTime - this.lastReactionTime > this.config.reactionDelay) {
-        this.lastReactionTime = currentTime;
+      if (this.reactionTimer > this.config.reactionDelay) {
+        this.reactionTimer = 0;
         
         // Calculate target position with error margin
         this.targetY = ball.y;
@@ -105,7 +107,7 @@ class AI {
    * Reset AI state
    */
   reset() {
-    this.lastReactionTime = 0;
+    this.reactionTimer = 0;
     this.targetY = CONFIG.CANVAS_HEIGHT / 2;
     this.errorOffset = 0;
   }

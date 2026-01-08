@@ -146,34 +146,29 @@ class Renderer {
   }
 
   /**
+   * Draw common game elements (paddles, ball, score)
+   */
+  drawGameElements(gameState) {
+    this.drawPaddle(gameState.player1Paddle);
+    this.drawPaddle(gameState.player2Paddle);
+    this.drawBall(gameState.ball);
+    this.drawScore(gameState.player1Score, gameState.player2Score);
+  }
+
+  /**
    * Render the game state
    */
   render(gameState) {
     this.clear();
     this.drawCenterLine();
+    this.drawGameElements(gameState);
     
+    // Draw state-specific overlays
     if (gameState.state === 'MENU') {
-      this.drawPaddle(gameState.player1Paddle);
-      this.drawPaddle(gameState.player2Paddle);
-      this.drawBall(gameState.ball);
-      this.drawScore(gameState.player1Score, gameState.player2Score);
       this.drawTitleScreen(gameState.currentDifficulty);
-    } else if (gameState.state === 'PLAYING') {
-      this.drawPaddle(gameState.player1Paddle);
-      this.drawPaddle(gameState.player2Paddle);
-      this.drawBall(gameState.ball);
-      this.drawScore(gameState.player1Score, gameState.player2Score);
     } else if (gameState.state === 'PAUSED') {
-      this.drawPaddle(gameState.player1Paddle);
-      this.drawPaddle(gameState.player2Paddle);
-      this.drawBall(gameState.ball);
-      this.drawScore(gameState.player1Score, gameState.player2Score);
       this.drawPauseScreen();
     } else if (gameState.state === 'GAME_OVER') {
-      this.drawPaddle(gameState.player1Paddle);
-      this.drawPaddle(gameState.player2Paddle);
-      this.drawBall(gameState.ball);
-      this.drawScore(gameState.player1Score, gameState.player2Score);
       this.drawGameOverScreen(gameState.winner, gameState.player1Score, gameState.player2Score);
     }
   }
