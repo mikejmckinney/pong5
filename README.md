@@ -39,7 +39,7 @@ A modern web-based Pong game optimized for mobile devices with a retro arcade ae
 - Procedural audio system with Web Audio API
 - Sound effects: paddle hits, wall bounces, scoring, game events
 - Audio mute toggle with localStorage persistence
-- Smooth 60fps performance maintained
+- Frame-rate independent animations tuned for a 60fps baseline
 
 ### Upcoming Phases
 - **Phase 4**: Power-ups and special game modes

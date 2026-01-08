@@ -17,6 +17,15 @@ class Renderer {
     
     // Scanline offset
     this.scanlineOffset = 0;
+    
+    // Initialize deltaTime to safe default
+    this.deltaTime = 16.67; // ~60fps default
+    
+    // Cache gradients for performance
+    this.paddleGradient = null;
+    this.ballGradient = null;
+    this.lastPaddleWidth = 0;
+    this.lastBallSize = 0;
   }
   
   /**
@@ -56,13 +65,10 @@ class Renderer {
     this.ctx.strokeStyle = CONFIG.COLORS.GRID_LINES;
     this.ctx.lineWidth = 1;
     
-    // Animate grid offset only when grid is enabled
-    if (CONFIG.EFFECTS.GRID_ENABLED) {
-      // Frame-rate independent animation (normalized to 60fps)
-      this.gridOffset += (60 / 1000) * this.deltaTime;
-      if (this.gridOffset >= gridSize) {
-        this.gridOffset = 0;
-      }
+    // Frame-rate independent animation (normalized to 60fps)
+    this.gridOffset += (60 / 1000) * this.deltaTime;
+    if (this.gridOffset >= gridSize) {
+      this.gridOffset = 0;
     }
     
     // Draw horizontal lines with perspective
@@ -70,8 +76,7 @@ class Renderer {
       const y = perspectiveY + (i * gridSize) - this.gridOffset;
       if (y > this.canvas.height) continue;
       
-      // Perspective scale
-      const scale = 1 - (i / CONFIG.EFFECTS.GRID_PERSPECTIVE_SCALE);
+      // Perspective alpha
       const alpha = Math.max(0.1, 0.4 - (i / 20));
       
       this.ctx.globalAlpha = alpha;
@@ -111,13 +116,10 @@ class Renderer {
     this.ctx.globalAlpha = 0.05;
     this.ctx.fillStyle = CONFIG.COLORS.BLACK;
     
-    // Animate scanlines only when enabled
-    if (CONFIG.EFFECTS.SCANLINES_ENABLED) {
-      // Frame-rate independent animation (normalized to 60fps)
-      this.scanlineOffset += (30 / 1000) * this.deltaTime;
-      if (this.scanlineOffset >= 4) {
-        this.scanlineOffset = 0;
-      }
+    // Frame-rate independent animation (normalized to 60fps)
+    this.scanlineOffset += (30 / 1000) * this.deltaTime;
+    if (this.scanlineOffset >= 4) {
+      this.scanlineOffset = 0;
     }
     
     for (let y = this.scanlineOffset; y < this.canvas.height; y += 4) {
@@ -159,21 +161,27 @@ class Renderer {
     this.ctx.shadowBlur = glowIntensity;
     this.ctx.shadowColor = glowColor;
     
-    // Gradient fill for paddle
-    const gradient = this.ctx.createLinearGradient(
-      paddle.x, paddle.y,
-      paddle.x + paddle.width, paddle.y
-    );
-    gradient.addColorStop(0, CONFIG.COLORS.NEON_CYAN);
-    gradient.addColorStop(0.5, CONFIG.COLORS.WHITE);
-    gradient.addColorStop(1, CONFIG.COLORS.NEON_CYAN);
+    // Cache gradient for paddle if not created or size changed
+    if (!this.paddleGradient || this.lastPaddleWidth !== paddle.width) {
+      this.paddleGradient = this.ctx.createLinearGradient(
+        0, 0,
+        paddle.width, 0
+      );
+      this.paddleGradient.addColorStop(0, CONFIG.COLORS.NEON_CYAN);
+      this.paddleGradient.addColorStop(0.5, CONFIG.COLORS.WHITE);
+      this.paddleGradient.addColorStop(1, CONFIG.COLORS.NEON_CYAN);
+      this.lastPaddleWidth = paddle.width;
+    }
     
-    this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+    this.ctx.save();
+    this.ctx.translate(paddle.x, paddle.y);
+    this.ctx.fillStyle = this.paddleGradient;
+    this.ctx.fillRect(0, 0, paddle.width, paddle.height);
     
     // Second glow layer
     this.ctx.shadowBlur = glowIntensity / 2;
-    this.ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+    this.ctx.fillRect(0, 0, paddle.width, paddle.height);
+    this.ctx.restore();
     
     // Reset shadow
     this.ctx.shadowBlur = 0;
@@ -183,16 +191,17 @@ class Renderer {
    * Draw the ball with enhanced glow and motion trail
    */
   drawBall(ball) {
-    // Add current position to trail
-    this.ballTrail.push({ x: ball.x, y: ball.y, size: ball.size });
-    
-    // Keep trail length limited
-    if (this.ballTrail.length > CONFIG.EFFECTS.BALL_TRAIL_LENGTH) {
-      this.ballTrail.shift();
-    }
-    
-    // Draw trail
+    // Only update trail if glow effects are enabled
     if (CONFIG.EFFECTS.GLOW_ENABLED) {
+      // Add current position to trail
+      this.ballTrail.push({ x: ball.x, y: ball.y, size: ball.size });
+      
+      // Keep trail length limited
+      if (this.ballTrail.length > CONFIG.EFFECTS.BALL_TRAIL_LENGTH) {
+        this.ballTrail.shift();
+      }
+      
+      // Draw trail
       this.ctx.save();
       for (let i = 0; i < this.ballTrail.length - 1; i++) {
         const pos = this.ballTrail[i];
@@ -218,19 +227,24 @@ class Renderer {
     this.ctx.shadowBlur = CONFIG.EFFECTS.GLOW_ENABLED ? CONFIG.EFFECTS.BALL_GLOW : 0;
     this.ctx.shadowColor = CONFIG.COLORS.NEON_PINK;
     
-    // Gradient fill for ball
-    const gradient = this.ctx.createRadialGradient(
-      ball.x, ball.y, 0,
-      ball.x, ball.y, ball.size / 2
-    );
-    gradient.addColorStop(0, CONFIG.COLORS.WHITE);
-    gradient.addColorStop(0.4, CONFIG.COLORS.NEON_PINK);
-    gradient.addColorStop(1, CONFIG.COLORS.NEON_PURPLE);
+    // Cache gradient for ball if not created or size changed
+    if (!this.ballGradient || this.lastBallSize !== ball.size) {
+      this.ballGradient = this.ctx.createRadialGradient(
+        0, 0, 0,
+        0, 0, ball.size / 2
+      );
+      this.ballGradient.addColorStop(0, CONFIG.COLORS.WHITE);
+      this.ballGradient.addColorStop(0.4, CONFIG.COLORS.NEON_PINK);
+      this.ballGradient.addColorStop(1, CONFIG.COLORS.NEON_PURPLE);
+      this.lastBallSize = ball.size;
+    }
     
-    this.ctx.fillStyle = gradient;
+    this.ctx.save();
+    this.ctx.translate(ball.x, ball.y);
+    this.ctx.fillStyle = this.ballGradient;
     this.ctx.fillRect(
-      ball.x - ball.size / 2,
-      ball.y - ball.size / 2,
+      -ball.size / 2,
+      -ball.size / 2,
       ball.size,
       ball.size
     );
@@ -240,13 +254,14 @@ class Renderer {
       this.ctx.shadowBlur = 40;
       this.ctx.globalAlpha = 0.5;
       this.ctx.fillRect(
-        ball.x - ball.size / 2,
-        ball.y - ball.size / 2,
+        -ball.size / 2,
+        -ball.size / 2,
         ball.size,
         ball.size
       );
       this.ctx.globalAlpha = 1.0;
     }
+    this.ctx.restore();
     
     // Reset shadow
     this.ctx.shadowBlur = 0;

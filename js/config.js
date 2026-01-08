@@ -77,7 +77,7 @@ const CONFIG = {
   AUDIO: {
     ENABLED: true,
     VOLUME: 0.5,
-    MUTED: false,
+    MUTED: false, // Default mute state (used when localStorage is empty)
     TONE_VOLUME_MULTIPLIER: 0.3
   }
 };

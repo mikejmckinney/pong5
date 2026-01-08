@@ -98,18 +98,22 @@ class ParticleSystem {
    */
   update(deltaTime) {
     const dt = deltaTime / 1000; // Convert to seconds
+    const frameScale = dt * 60; // Normalize to 60fps
+    
+    // Pre-calculate drag factor for optimization (avoid Math.pow per particle)
+    const dragFactor = 1 - ((1 - CONFIG.EFFECTS.PARTICLE_DRAG) * frameScale);
     
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const particle = this.particles[i];
       
       // Update position with frame-rate independent movement
-      particle.x += particle.velocityX * dt * 60; // Normalize to 60fps
-      particle.y += particle.velocityY * dt * 60;
+      particle.x += particle.velocityX * frameScale;
+      particle.y += particle.velocityY * frameScale;
       
       // Apply gravity/drag with frame-rate independent physics
-      particle.velocityY += CONFIG.EFFECTS.PARTICLE_GRAVITY * dt * 60;
-      particle.velocityX *= Math.pow(CONFIG.EFFECTS.PARTICLE_DRAG, dt * 60);
-      particle.velocityY *= Math.pow(CONFIG.EFFECTS.PARTICLE_DRAG, dt * 60);
+      particle.velocityY += CONFIG.EFFECTS.PARTICLE_GRAVITY * frameScale;
+      particle.velocityX *= dragFactor;
+      particle.velocityY *= dragFactor;
       
       // Update life
       particle.life -= dt / particle.maxLife;
