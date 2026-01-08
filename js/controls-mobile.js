@@ -27,10 +27,12 @@ class MobileControls {
     this.player1TargetY = null;
     this.player2TargetY = null;
     
+    // Always position touch zones for visual feedback
+    this.updateTouchZonePositions();
+    
     if (this.isEnabled) {
       this.setupEventListeners();
       this.preventDefaultGestures();
-      this.updateTouchZonePositions();
     }
   }
 
