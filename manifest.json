@@ -1,7 +1,7 @@
 {
   "name": "Retro Pong",
   "short_name": "Pong",
-  "start_url": "/index.html",
+  "start_url": "./",
   "display": "fullscreen",
   "background_color": "#0a0a0a",
   "theme_color": "#ff00ff",

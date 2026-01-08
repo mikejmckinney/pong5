@@ -30,12 +30,15 @@ body {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  height: 100dvh;
   /* Handle safe areas for notched screens */
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 #game-canvas {
+  position: relative;
+  z-index: 0;
   border: 2px solid #00ffff;
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
   background-color: #0a0a0a;
@@ -49,21 +52,10 @@ body {
 
 /* Touch zone overlays */
 .touch-zone {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50%;
+  position: fixed;
   pointer-events: none;
   transition: background-color 0.2s ease;
   z-index: 1;
-}
-
-.touch-zone-left {
-  left: 0;
-}
-
-.touch-zone-right {
-  right: 0;
 }
 
 .touch-zone.active {
@@ -84,7 +76,7 @@ html {
 /* Landscape orientation (primary target) */
 @media screen and (orientation: landscape) {
   #game-container {
-    padding: 10px;
+    padding: calc(10px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left));
   }
   
   #game-canvas {
@@ -96,7 +88,7 @@ html {
 /* Portrait orientation */
 @media screen and (orientation: portrait) {
   #game-container {
-    padding: 5px;
+    padding: calc(5px + env(safe-area-inset-top)) calc(5px + env(safe-area-inset-right)) calc(5px + env(safe-area-inset-bottom)) calc(5px + env(safe-area-inset-left));
   }
   
   #game-canvas {
@@ -113,7 +105,7 @@ html {
   }
   
   #game-container {
-    padding: 2px;
+    padding: calc(2px + env(safe-area-inset-top)) calc(2px + env(safe-area-inset-right)) calc(2px + env(safe-area-inset-bottom)) calc(2px + env(safe-area-inset-left));
   }
 }
 

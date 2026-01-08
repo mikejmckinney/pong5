@@ -192,7 +192,7 @@ class Game {
     }
 
     // Update player paddle
-    // Support both keyboard and touch controls
+    // Support both keyboard and touch controls (additive)
     let paddleMovement = 0;
     
     // Keyboard controls
@@ -203,7 +203,7 @@ class Game {
       paddleMovement += CONFIG.PADDLE_SPEED;
     }
     
-    // Touch controls (override keyboard if active)
+    // Touch controls (additive with keyboard)
     if (this.mobileControls.isActive() && this.mobileControls.isPlayer1Active()) {
       const targetY = this.mobileControls.getPlayer1Target();
       if (targetY !== null) {
@@ -211,9 +211,11 @@ class Game {
         const paddleCenter = this.player1Paddle.y + this.player1Paddle.height / 2;
         const diff = targetY - paddleCenter;
         
-        // Smooth movement with dead zone
-        if (Math.abs(diff) > 5) {
-          paddleMovement = clamp(diff * CONFIG.TOUCH_SMOOTHING_FACTOR, -CONFIG.PADDLE_SPEED, CONFIG.PADDLE_SPEED);
+        // Smooth movement with configurable dead zone
+        if (Math.abs(diff) > CONFIG.TOUCH_DEAD_ZONE) {
+          const touchMovement = clamp(diff * CONFIG.TOUCH_SMOOTHING_FACTOR, -CONFIG.PADDLE_SPEED, CONFIG.PADDLE_SPEED);
+          // When touch is active, prioritize touch input
+          paddleMovement = touchMovement;
         }
       }
     }

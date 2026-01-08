@@ -30,7 +30,40 @@ class MobileControls {
     if (this.isEnabled) {
       this.setupEventListeners();
       this.preventDefaultGestures();
+      this.updateTouchZonePositions();
     }
+  }
+
+  /**
+   * Update touch zone positions to align with canvas
+   */
+  updateTouchZonePositions() {
+    const updatePositions = () => {
+      const rect = this.canvas.getBoundingClientRect();
+      const leftZone = document.getElementById('touch-zone-left');
+      const rightZone = document.getElementById('touch-zone-right');
+      
+      if (leftZone && rightZone) {
+        const width = rect.width / 2;
+        
+        leftZone.style.left = `${rect.left}px`;
+        leftZone.style.top = `${rect.top}px`;
+        leftZone.style.width = `${width}px`;
+        leftZone.style.height = `${rect.height}px`;
+        
+        rightZone.style.left = `${rect.left + width}px`;
+        rightZone.style.top = `${rect.top}px`;
+        rightZone.style.width = `${width}px`;
+        rightZone.style.height = `${rect.height}px`;
+      }
+    };
+    
+    // Update on load and resize
+    updatePositions();
+    window.addEventListener('resize', updatePositions);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(updatePositions, 100); // Delay to ensure layout is updated
+    });
   }
 
   /**
@@ -49,9 +82,9 @@ class MobileControls {
     // Prevent pull-to-refresh and overscroll
     document.body.style.overscrollBehavior = 'none';
     
-    // Prevent double-tap zoom
+    // Prevent double-tap zoom - limited to canvas only
     let lastTouchEnd = 0;
-    document.addEventListener('touchend', (e) => {
+    this.canvas.addEventListener('touchend', (e) => {
       const now = Date.now();
       if (now - lastTouchEnd <= CONFIG.DOUBLE_TAP_PREVENT_MS) {
         e.preventDefault();
@@ -80,6 +113,23 @@ class MobileControls {
     this.canvas.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
     this.canvas.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
     this.canvas.addEventListener('touchcancel', (e) => this.handleTouchEnd(e), { passive: false });
+    
+    // Reset touch state when device orientation changes
+    this.handleOrientationChange = () => {
+      this.player1Touch.active = false;
+      this.player1Touch.touchId = null;
+      this.player1Touch.startY = 0;
+      this.player1Touch.currentY = 0;
+
+      this.player2Touch.active = false;
+      this.player2Touch.touchId = null;
+      this.player2Touch.startY = 0;
+      this.player2Touch.currentY = 0;
+
+      this.player1TargetY = null;
+      this.player2TargetY = null;
+    };
+    window.addEventListener('orientationchange', this.handleOrientationChange);
   }
 
   /**
@@ -187,6 +237,15 @@ class MobileControls {
       } else {
         overlay.classList.remove('active');
       }
+    } else {
+      // In development, warn if the expected overlay element is missing
+      const isDevEnv = (typeof window !== 'undefined' && 
+                        window.location && 
+                        window.location.hostname === 'localhost');
+      
+      if (isDevEnv && typeof console !== 'undefined' && console.warn) {
+        console.warn(`MobileControls: Expected touch zone overlay element with id "touch-zone-${zone}" not found.`);
+      }
     }
   }
 
@@ -223,5 +282,29 @@ class MobileControls {
    */
   isActive() {
     return this.isEnabled;
+  }
+
+  /**
+   * Cleanup method to remove event listeners
+   */
+  destroy() {
+    if (!this.isEnabled) return;
+    
+    // Remove canvas event listeners
+    this.canvas.removeEventListener('touchstart', this.handleTouchStart);
+    this.canvas.removeEventListener('touchmove', this.handleTouchMove);
+    this.canvas.removeEventListener('touchend', this.handleTouchEnd);
+    this.canvas.removeEventListener('touchcancel', this.handleTouchEnd);
+    
+    // Remove orientation change listener
+    if (this.handleOrientationChange) {
+      window.removeEventListener('orientationchange', this.handleOrientationChange);
+    }
+    
+    // Reset touch states
+    this.player1Touch.active = false;
+    this.player2Touch.active = false;
+    this.player1TargetY = null;
+    this.player2TargetY = null;
   }
 }
