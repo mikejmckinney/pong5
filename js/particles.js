@@ -100,8 +100,12 @@ class ParticleSystem {
     const dt = deltaTime / 1000; // Convert to seconds
     const frameScale = dt * 60; // Normalize to 60fps
     
-    // Pre-calculate drag factor for optimization (avoid Math.pow per particle)
-    const dragFactor = 1 - ((1 - CONFIG.EFFECTS.PARTICLE_DRAG) * frameScale);
+    // Calculate drag factor with exponential decay approximation
+    // For small frameScale, use linear approximation; for larger values, use Math.pow
+    // This balances performance with accuracy
+    const dragFactor = frameScale < 2 
+      ? 1 - ((1 - CONFIG.EFFECTS.PARTICLE_DRAG) * frameScale)
+      : Math.pow(CONFIG.EFFECTS.PARTICLE_DRAG, frameScale);
     
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const particle = this.particles[i];
