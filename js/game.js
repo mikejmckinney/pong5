@@ -383,7 +383,7 @@ class Game {
     this.update(deltaTime);
 
     // Render
-    this.renderer.render(this.getGameState());
+    this.renderer.render(this.getGameState(), deltaTime);
 
     // Continue loop
     requestAnimationFrame((time) => this.run(time));

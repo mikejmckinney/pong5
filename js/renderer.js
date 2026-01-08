@@ -58,7 +58,8 @@ class Renderer {
     
     // Animate grid offset only when grid is enabled
     if (CONFIG.EFFECTS.GRID_ENABLED) {
-      this.gridOffset += 1;
+      // Frame-rate independent animation (normalized to 60fps)
+      this.gridOffset += (60 / 1000) * this.deltaTime;
       if (this.gridOffset >= gridSize) {
         this.gridOffset = 0;
       }
@@ -112,7 +113,8 @@ class Renderer {
     
     // Animate scanlines only when enabled
     if (CONFIG.EFFECTS.SCANLINES_ENABLED) {
-      this.scanlineOffset += 0.5;
+      // Frame-rate independent animation (normalized to 60fps)
+      this.scanlineOffset += (30 / 1000) * this.deltaTime;
       if (this.scanlineOffset >= 4) {
         this.scanlineOffset = 0;
       }
@@ -375,7 +377,10 @@ class Renderer {
   /**
    * Render the game state
    */
-  render(gameState) {
+  render(gameState, deltaTime = 16.67) {
+    // Store deltaTime for animations
+    this.deltaTime = deltaTime;
+    
     this.clear();
     this.drawCenterLine();
     
