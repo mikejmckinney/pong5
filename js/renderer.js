@@ -45,11 +45,21 @@ class Renderer {
     
     // Draw grid background if enabled
     if (CONFIG.EFFECTS.GRID_ENABLED) {
+      // Update grid animation (frame-rate independent, normalized to 60fps)
+      this.gridOffset += (60 / 1000) * this.deltaTime;
+      if (this.gridOffset >= CONFIG.EFFECTS.GRID_SIZE) {
+        this.gridOffset = 0;
+      }
       this.drawGrid();
     }
     
     // Draw scanlines if enabled
     if (CONFIG.EFFECTS.SCANLINES_ENABLED) {
+      // Update scanline animation (frame-rate independent, normalized to 60fps)
+      this.scanlineOffset += (30 / 1000) * this.deltaTime;
+      if (this.scanlineOffset >= 4) {
+        this.scanlineOffset = 0;
+      }
       this.drawScanlines();
     }
   }
@@ -64,12 +74,6 @@ class Renderer {
     this.ctx.save();
     this.ctx.strokeStyle = CONFIG.COLORS.GRID_LINES;
     this.ctx.lineWidth = 1;
-    
-    // Frame-rate independent animation (normalized to 60fps)
-    this.gridOffset += (60 / 1000) * this.deltaTime;
-    if (this.gridOffset >= gridSize) {
-      this.gridOffset = 0;
-    }
     
     // Draw horizontal lines with perspective
     for (let i = 0; i < CONFIG.EFFECTS.GRID_HORIZONTAL_LINES; i++) {
@@ -115,12 +119,6 @@ class Renderer {
     this.ctx.save();
     this.ctx.globalAlpha = 0.05;
     this.ctx.fillStyle = CONFIG.COLORS.BLACK;
-    
-    // Frame-rate independent animation (normalized to 60fps)
-    this.scanlineOffset += (30 / 1000) * this.deltaTime;
-    if (this.scanlineOffset >= 4) {
-      this.scanlineOffset = 0;
-    }
     
     for (let y = this.scanlineOffset; y < this.canvas.height; y += 4) {
       this.ctx.fillRect(0, y, this.canvas.width, 2);
