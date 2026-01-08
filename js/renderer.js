@@ -18,6 +18,13 @@ class Renderer {
     // Scanline offset
     this.scanlineOffset = 0;
   }
+  
+  /**
+   * Clear ball trail
+   */
+  clearBallTrail() {
+    this.ballTrail = [];
+  }
 
   /**
    * Clear the canvas and draw background effects

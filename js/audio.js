@@ -79,8 +79,15 @@ class AudioManager {
     oscillator.frequency.value = frequency;
     oscillator.type = type;
     
-    gainNode.gain.setValueAtTime(volume * CONFIG.AUDIO.TONE_VOLUME_MULTIPLIER, this.audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
+    const startVolume = volume * CONFIG.AUDIO.TONE_VOLUME_MULTIPLIER;
+    gainNode.gain.setValueAtTime(startVolume, this.audioContext.currentTime);
+    
+    // Use linear ramp if starting from 0 to avoid exponential ramp error
+    if (startVolume > 0) {
+      gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
+    } else {
+      gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + duration);
+    }
     
     oscillator.start(this.audioContext.currentTime);
     oscillator.stop(this.audioContext.currentTime + duration);

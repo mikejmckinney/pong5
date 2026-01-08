@@ -95,6 +95,8 @@ class Game {
     this.resetBall();
     this.ai.reset();
     this.serveDirection = 1;
+    this.particleSystem.clear();
+    this.renderer.clearBallTrail();
   }
 
   /**
