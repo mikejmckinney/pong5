@@ -56,6 +56,7 @@ class Game {
     // Track key states for one-time presses
     this.spaceWasPressed = false;
     this.escapeWasPressed = false;
+    this.muteWasPressed = false;
     
     // Track previous ball position for collision detection
     this.prevBallX = CONFIG.CANVAS_WIDTH / 2;
@@ -145,6 +146,12 @@ class Game {
    * Update game state
    */
   update(deltaTime) {
+    // Handle mute toggle (available in all states)
+    if (this.controls.isMutePressed() && !this.muteWasPressed) {
+      this.audioManager.toggleMute();
+    }
+    this.muteWasPressed = this.controls.isMutePressed();
+    
     // Handle menu state
     if (this.state === 'MENU') {
       // Check for difficulty selection
@@ -154,6 +161,7 @@ class Game {
         const newDifficulty = difficulties[diffKey - 1];
         this.currentDifficulty = newDifficulty;
         this.ai.setDifficulty(newDifficulty);
+        this.audioManager.playMenuClick();
       }
       
       // Check for space to start

@@ -28,8 +28,20 @@ A modern web-based Pong game optimized for mobile devices with a retro arcade ae
 - Offline play support via Service Worker
 - Disabled browser gestures during gameplay
 
+#### Phase 3: Polish (Synthwave Aesthetics) ✅
+- Animated synthwave grid background receding into horizon
+- Glowing neon paddles with gradient fills
+- Ball motion trail effect (last 8 positions)
+- Particle effects on paddle hits (burst animations)
+- Retro pixel font (Press Start 2P from Google Fonts)
+- Enhanced glow effects on all game elements
+- CRT-style scanline overlay
+- Procedural audio system with Web Audio API
+- Sound effects: paddle hits, wall bounces, scoring, game events
+- Audio mute toggle with localStorage persistence
+- Smooth 60fps performance maintained
+
 ### Upcoming Phases
-- **Phase 3**: Synthwave visuals, animations, and sound effects
 - **Phase 4**: Power-ups and special game modes
 - **Phase 5**: Local multiplayer (two players, same device)
 - **Phase 6-8**: Online multiplayer with Supabase + Railway backend
@@ -45,6 +57,7 @@ A modern web-based Pong game optimized for mobile devices with a retro arcade ae
 | Space | Start game / Restart |
 | ESC | Pause / Resume |
 | 1-4 | Select AI difficulty |
+| M | Toggle audio mute |
 
 ### Mobile
 - **Touch & Drag**: Slide finger up/down to move paddle
@@ -89,7 +102,8 @@ pong5/
 ├── manifest.json           # PWA manifest
 ├── service-worker.js       # Offline support
 ├── css/
-│   └── main.css            # Core styles
+│   ├── main.css            # Core styles
+│   └── animations.css      # Keyframe animations
 ├── js/
 │   ├── config.js           # Game configuration
 │   ├── game.js             # Core game logic
@@ -97,6 +111,8 @@ pong5/
 │   ├── controls.js         # Keyboard input
 │   ├── controls-mobile.js  # Touch input
 │   ├── ai.js               # AI opponent
+│   ├── audio.js            # Audio management
+│   ├── particles.js        # Particle effects
 │   └── utils.js            # Helper functions
 └── assets/
     └── icons/              # PWA icons
