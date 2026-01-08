@@ -56,10 +56,12 @@ class Renderer {
     this.ctx.strokeStyle = CONFIG.COLORS.GRID_LINES;
     this.ctx.lineWidth = 1;
     
-    // Animate grid offset
-    this.gridOffset += 1;
-    if (this.gridOffset >= gridSize) {
-      this.gridOffset = 0;
+    // Animate grid offset only when grid is enabled
+    if (CONFIG.EFFECTS.GRID_ENABLED) {
+      this.gridOffset += 1;
+      if (this.gridOffset >= gridSize) {
+        this.gridOffset = 0;
+      }
     }
     
     // Draw horizontal lines with perspective
@@ -108,10 +110,12 @@ class Renderer {
     this.ctx.globalAlpha = 0.05;
     this.ctx.fillStyle = CONFIG.COLORS.BLACK;
     
-    // Animate scanlines
-    this.scanlineOffset += 0.5;
-    if (this.scanlineOffset >= 4) {
-      this.scanlineOffset = 0;
+    // Animate scanlines only when enabled
+    if (CONFIG.EFFECTS.SCANLINES_ENABLED) {
+      this.scanlineOffset += 0.5;
+      if (this.scanlineOffset >= 4) {
+        this.scanlineOffset = 0;
+      }
     }
     
     for (let y = this.scanlineOffset; y < this.canvas.height; y += 4) {

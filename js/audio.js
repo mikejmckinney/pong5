@@ -80,17 +80,16 @@ class AudioManager {
     oscillator.type = type;
     
     const startVolume = volume * CONFIG.AUDIO.TONE_VOLUME_MULTIPLIER;
-    gainNode.gain.setValueAtTime(startVolume, this.audioContext.currentTime);
     
-    // Use linear ramp if starting from 0 to avoid exponential ramp error
+    // Only play sound if volume is greater than 0
     if (startVolume > 0) {
+      gainNode.gain.setValueAtTime(startVolume, this.audioContext.currentTime);
+      // Use exponential ramp with minimum target of 0.01 (required by Web Audio API)
       gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
-    } else {
-      gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + duration);
+      
+      oscillator.start(this.audioContext.currentTime);
+      oscillator.stop(this.audioContext.currentTime + duration);
     }
-    
-    oscillator.start(this.audioContext.currentTime);
-    oscillator.stop(this.audioContext.currentTime + duration);
   }
   
   /**
