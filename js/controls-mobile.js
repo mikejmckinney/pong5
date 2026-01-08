@@ -111,10 +111,15 @@ class MobileControls {
    * Setup touch event listeners
    */
   setupEventListeners() {
-    this.canvas.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
-    this.canvas.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
-    this.canvas.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
-    this.canvas.addEventListener('touchcancel', (e) => this.handleTouchEnd(e), { passive: false });
+    // Store bound functions for cleanup
+    this.boundHandleTouchStart = (e) => this.handleTouchStart(e);
+    this.boundHandleTouchMove = (e) => this.handleTouchMove(e);
+    this.boundHandleTouchEnd = (e) => this.handleTouchEnd(e);
+    
+    this.canvas.addEventListener('touchstart', this.boundHandleTouchStart, { passive: false });
+    this.canvas.addEventListener('touchmove', this.boundHandleTouchMove, { passive: false });
+    this.canvas.addEventListener('touchend', this.boundHandleTouchEnd, { passive: false });
+    this.canvas.addEventListener('touchcancel', this.boundHandleTouchEnd, { passive: false });
     
     // Reset touch state when device orientation changes
     this.handleOrientationChange = () => {
@@ -292,11 +297,13 @@ class MobileControls {
   destroy() {
     if (!this.isEnabled) return;
     
-    // Remove canvas event listeners
-    this.canvas.removeEventListener('touchstart', this.handleTouchStart);
-    this.canvas.removeEventListener('touchmove', this.handleTouchMove);
-    this.canvas.removeEventListener('touchend', this.handleTouchEnd);
-    this.canvas.removeEventListener('touchcancel', this.handleTouchEnd);
+    // Remove canvas event listeners using stored bound functions
+    if (this.boundHandleTouchStart) {
+      this.canvas.removeEventListener('touchstart', this.boundHandleTouchStart);
+      this.canvas.removeEventListener('touchmove', this.boundHandleTouchMove);
+      this.canvas.removeEventListener('touchend', this.boundHandleTouchEnd);
+      this.canvas.removeEventListener('touchcancel', this.boundHandleTouchEnd);
+    }
     
     // Remove orientation change listener
     if (this.handleOrientationChange) {
