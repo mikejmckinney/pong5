@@ -2,8 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#ff00ff">
   <title>Retro Pong</title>
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Apple Touch Icons -->
+  <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+  
   <link rel="stylesheet" href="css/main.css">
   <style>
     /* Responsive canvas scaling for mobile devices */
@@ -16,14 +27,33 @@
 </head>
 <body>
   <div id="game-container">
+    <!-- Touch zone overlays for visual feedback -->
+    <div id="touch-zone-left" class="touch-zone touch-zone-left"></div>
+    <div id="touch-zone-right" class="touch-zone touch-zone-right"></div>
     <canvas id="game-canvas" aria-label="Retro Pong Game Canvas"></canvas>
   </div>
   
   <script src="js/config.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/controls.js"></script>
+  <script src="js/controls-mobile.js"></script>
   <script src="js/ai.js"></script>
   <script src="js/renderer.js"></script>
   <script src="js/game.js"></script>
+  
+  <!-- Register Service Worker for PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then((registration) => {
+            console.log('Service Worker registered:', registration.scope);
+          })
+          .catch((error) => {
+            console.error('Service Worker registration failed:', error);
+          });
+      });
+    }
+  </script>
 </body>
 </html>

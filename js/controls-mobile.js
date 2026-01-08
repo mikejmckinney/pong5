@@ -1,0 +1,227 @@
+/**
+ * Mobile Controls - Handle touch input for mobile devices
+ * Supports drag-based paddle movement with split-screen zones
+ */
+
+class MobileControls {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.isEnabled = this.isTouchDevice();
+    
+    // Touch state for both paddles
+    this.player1Touch = {
+      active: false,
+      touchId: null,
+      startY: 0,
+      currentY: 0
+    };
+    
+    this.player2Touch = {
+      active: false,
+      touchId: null,
+      startY: 0,
+      currentY: 0
+    };
+    
+    // Target positions for smooth paddle movement
+    this.player1TargetY = null;
+    this.player2TargetY = null;
+    
+    if (this.isEnabled) {
+      this.setupEventListeners();
+      this.preventDefaultGestures();
+    }
+  }
+
+  /**
+   * Detect if device supports touch
+   */
+  isTouchDevice() {
+    return ('ontouchstart' in window) || 
+           (navigator.maxTouchPoints > 0) || 
+           (navigator.msMaxTouchPoints > 0);
+  }
+
+  /**
+   * Prevent default browser gestures
+   */
+  preventDefaultGestures() {
+    // Prevent pull-to-refresh and overscroll
+    document.body.style.overscrollBehavior = 'none';
+    
+    // Prevent double-tap zoom
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, { passive: false });
+    
+    // Prevent pinch zoom
+    document.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+    
+    // Prevent context menu on long press
+    this.canvas.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+    });
+  }
+
+  /**
+   * Setup touch event listeners
+   */
+  setupEventListeners() {
+    this.canvas.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
+    this.canvas.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
+    this.canvas.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
+    this.canvas.addEventListener('touchcancel', (e) => this.handleTouchEnd(e), { passive: false });
+  }
+
+  /**
+   * Get touch zone for a touch position
+   * Returns 'left' for player 1, 'right' for player 2
+   */
+  getTouchZone(clientX) {
+    const rect = this.canvas.getBoundingClientRect();
+    const relativeX = clientX - rect.left;
+    const canvasWidth = rect.width;
+    
+    return relativeX < canvasWidth / 2 ? 'left' : 'right';
+  }
+
+  /**
+   * Convert client Y to canvas Y coordinate
+   */
+  clientYToCanvasY(clientY) {
+    const rect = this.canvas.getBoundingClientRect();
+    const relativeY = clientY - rect.top;
+    const scale = CONFIG.CANVAS_HEIGHT / rect.height;
+    return relativeY * scale;
+  }
+
+  /**
+   * Handle touch start
+   */
+  handleTouchStart(e) {
+    e.preventDefault();
+    
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+      const zone = this.getTouchZone(touch.clientX);
+      const canvasY = this.clientYToCanvasY(touch.clientY);
+      
+      if (zone === 'left' && !this.player1Touch.active) {
+        this.player1Touch.active = true;
+        this.player1Touch.touchId = touch.identifier;
+        this.player1Touch.startY = canvasY;
+        this.player1Touch.currentY = canvasY;
+        this.player1TargetY = canvasY;
+        this.showTouchZoneFeedback('left', true);
+      } else if (zone === 'right' && !this.player2Touch.active) {
+        this.player2Touch.active = true;
+        this.player2Touch.touchId = touch.identifier;
+        this.player2Touch.startY = canvasY;
+        this.player2Touch.currentY = canvasY;
+        this.player2TargetY = canvasY;
+        this.showTouchZoneFeedback('right', true);
+      }
+    }
+  }
+
+  /**
+   * Handle touch move
+   */
+  handleTouchMove(e) {
+    e.preventDefault();
+    
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+      const canvasY = this.clientYToCanvasY(touch.clientY);
+      
+      if (this.player1Touch.active && touch.identifier === this.player1Touch.touchId) {
+        this.player1Touch.currentY = canvasY;
+        this.player1TargetY = canvasY;
+      } else if (this.player2Touch.active && touch.identifier === this.player2Touch.touchId) {
+        this.player2Touch.currentY = canvasY;
+        this.player2TargetY = canvasY;
+      }
+    }
+  }
+
+  /**
+   * Handle touch end
+   */
+  handleTouchEnd(e) {
+    e.preventDefault();
+    
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+      
+      if (this.player1Touch.active && touch.identifier === this.player1Touch.touchId) {
+        this.player1Touch.active = false;
+        this.player1Touch.touchId = null;
+        this.player1TargetY = null;
+        this.showTouchZoneFeedback('left', false);
+      } else if (this.player2Touch.active && touch.identifier === this.player2Touch.touchId) {
+        this.player2Touch.active = false;
+        this.player2Touch.touchId = null;
+        this.player2TargetY = null;
+        this.showTouchZoneFeedback('right', false);
+      }
+    }
+  }
+
+  /**
+   * Show visual feedback for touch zones
+   */
+  showTouchZoneFeedback(zone, active) {
+    const overlay = document.getElementById(`touch-zone-${zone}`);
+    if (overlay) {
+      if (active) {
+        overlay.classList.add('active');
+      } else {
+        overlay.classList.remove('active');
+      }
+    }
+  }
+
+  /**
+   * Get player 1 target position (for player-controlled paddle)
+   */
+  getPlayer1Target() {
+    return this.player1TargetY;
+  }
+
+  /**
+   * Get player 2 target position (for AI or future multiplayer)
+   */
+  getPlayer2Target() {
+    return this.player2TargetY;
+  }
+
+  /**
+   * Check if player 1 touch is active
+   */
+  isPlayer1Active() {
+    return this.player1Touch.active;
+  }
+
+  /**
+   * Check if player 2 touch is active
+   */
+  isPlayer2Active() {
+    return this.player2Touch.active;
+  }
+
+  /**
+   * Check if mobile controls are enabled
+   */
+  isActive() {
+    return this.isEnabled;
+  }
+}

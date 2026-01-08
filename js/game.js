@@ -7,6 +7,7 @@ class Game {
     this.canvas = document.getElementById('game-canvas');
     this.renderer = new Renderer(this.canvas);
     this.controls = new Controls();
+    this.mobileControls = new MobileControls(this.canvas);
     this.ai = new AI('MEDIUM');
     
     // Game state
@@ -191,12 +192,33 @@ class Game {
     }
 
     // Update player paddle
+    // Support both keyboard and touch controls
+    let paddleMovement = 0;
+    
+    // Keyboard controls
     if (this.controls.isMovingUp()) {
-      this.player1Paddle.y -= CONFIG.PADDLE_SPEED;
+      paddleMovement -= CONFIG.PADDLE_SPEED;
     }
     if (this.controls.isMovingDown()) {
-      this.player1Paddle.y += CONFIG.PADDLE_SPEED;
+      paddleMovement += CONFIG.PADDLE_SPEED;
     }
+    
+    // Touch controls (override keyboard if active)
+    if (this.mobileControls.isActive() && this.mobileControls.isPlayer1Active()) {
+      const targetY = this.mobileControls.getPlayer1Target();
+      if (targetY !== null) {
+        // Move paddle toward touch position
+        const paddleCenter = this.player1Paddle.y + this.player1Paddle.height / 2;
+        const diff = targetY - paddleCenter;
+        
+        // Smooth movement with dead zone
+        if (Math.abs(diff) > 5) {
+          paddleMovement = clamp(diff * 0.2, -CONFIG.PADDLE_SPEED, CONFIG.PADDLE_SPEED);
+        }
+      }
+    }
+    
+    this.player1Paddle.y += paddleMovement;
     
     // Keep player paddle in bounds
     this.player1Paddle.y = clamp(
@@ -294,7 +316,9 @@ class Game {
       player1Score: this.player1Score,
       player2Score: this.player2Score,
       winner: this.winner,
-      currentDifficulty: this.currentDifficulty
+      currentDifficulty: this.currentDifficulty,
+      player1TouchActive: this.mobileControls.isPlayer1Active(),
+      player2TouchActive: this.mobileControls.isPlayer2Active()
     };
   }
 
