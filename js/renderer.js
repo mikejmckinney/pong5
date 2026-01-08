@@ -35,10 +35,13 @@ class Renderer {
   /**
    * Draw a paddle with glow effect
    */
-  drawPaddle(paddle) {
-    // Glow effect
-    this.ctx.shadowBlur = 15;
-    this.ctx.shadowColor = CONFIG.COLORS.PADDLE;
+  drawPaddle(paddle, isActive = false) {
+    // Enhanced glow effect when paddle is actively controlled via touch
+    const glowIntensity = isActive ? 25 : 15;
+    const glowColor = isActive ? CONFIG.COLORS.BALL : CONFIG.COLORS.PADDLE;
+    
+    this.ctx.shadowBlur = glowIntensity;
+    this.ctx.shadowColor = glowColor;
     
     this.ctx.fillStyle = CONFIG.COLORS.PADDLE;
     this.ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
@@ -149,8 +152,12 @@ class Renderer {
    * Draw common game elements (paddles, ball, score)
    */
   drawGameElements(gameState) {
-    this.drawPaddle(gameState.player1Paddle);
-    this.drawPaddle(gameState.player2Paddle);
+    // Check if paddles are being actively controlled via touch
+    const player1Active = gameState.player1TouchActive || false;
+    const player2Active = gameState.player2TouchActive || false;
+    
+    this.drawPaddle(gameState.player1Paddle, player1Active);
+    this.drawPaddle(gameState.player2Paddle, player2Active);
     this.drawBall(gameState.ball);
     this.drawScore(gameState.player1Score, gameState.player2Score);
   }

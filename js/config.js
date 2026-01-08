@@ -19,6 +19,11 @@ const CONFIG = {
   WINNING_SCORE: 11,
   RESET_DELAY: 1000,  // ms delay after scoring
   
+  // Touch controls
+  TOUCH_SMOOTHING_FACTOR: 0.2,  // Paddle movement smoothing for touch (0-1)
+  TOUCH_DEAD_ZONE: 3,  // Minimum movement threshold in pixels
+  DOUBLE_TAP_PREVENT_MS: 300,  // Double-tap prevention delay in milliseconds
+  
   // AI Difficulty (reaction time in ms, lower = harder)
   AI_DIFFICULTY: {
     EASY: { reactionDelay: 150, errorMargin: 50 },
