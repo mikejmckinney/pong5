@@ -53,10 +53,7 @@ class Renderer {
     // Draw scanlines if enabled
     if (CONFIG.EFFECTS.SCANLINES_ENABLED) {
       // Update scanline animation (frame-rate independent, normalized to 60fps)
-      this.scanlineOffset += (CONFIG.EFFECTS.SCANLINE_ANIMATION_SPEED / 1000) * this.deltaTime;
-      if (this.scanlineOffset >= 4) {
-        this.scanlineOffset = 0;
-      }
+      this.scanlineOffset = (this.scanlineOffset + (CONFIG.EFFECTS.SCANLINE_ANIMATION_SPEED / 1000) * this.deltaTime) % 4;
       this.drawScanlines();
     }
   }
