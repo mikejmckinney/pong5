@@ -49,6 +49,11 @@ class Controls {
   isEscapePressed() {
     return this.isPressed('escape') || this.isPressed('Escape');
   }
+  
+  // Check if M key is pressed (for mute toggle)
+  isMutePressed() {
+    return this.isPressed('m') || this.isPressed('M');
+  }
 
   // Check for difficulty selection (1-4)
   getDifficultyKeyPressed() {

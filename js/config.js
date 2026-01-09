@@ -32,12 +32,54 @@ const CONFIG = {
     IMPOSSIBLE: { reactionDelay: 0, errorMargin: 0 }
   },
   
-  // Colors (initial retro theme)
+  // Colors (synthwave theme)
   COLORS: {
     BACKGROUND: '#0a0a0a',
+    SECONDARY_BG: '#1a1a2e',
+    NEON_PINK: '#ff00ff',
+    NEON_CYAN: '#00ffff',
+    NEON_PURPLE: '#bf00ff',
+    ELECTRIC_BLUE: '#0080ff',
+    HOT_ORANGE: '#ff6600',
+    GRID_LINES: '#330033',
+    TEXT_GLOW: '#ffffff',
     PADDLE: '#00ffff',
     BALL: '#ff00ff',
     SCORE: '#ffffff',
-    CENTER_LINE: '#333333'
+    CENTER_LINE: '#333333',
+    WHITE: '#ffffff',
+    BLACK: '#000000'
+  },
+  
+  // Visual effects settings
+  EFFECTS: {
+    BALL_TRAIL_LENGTH: 8,
+    PARTICLE_COUNT: 12,
+    MAX_PARTICLES: 100,
+    SCANLINES_ENABLED: true,
+    GRID_ENABLED: true,
+    GLOW_ENABLED: true,
+    PADDLE_GLOW_NORMAL: 20,
+    PADDLE_GLOW_ACTIVE: 30,
+    BALL_GLOW: 25,
+    SCORE_GLOW: 15,
+    PARTICLE_GLOW: 15,
+    GRID_SIZE: 40,
+    GRID_PERSPECTIVE_Y: 0.6,
+    GRID_HORIZONTAL_LINES: 10,
+    GRID_VERTICAL_LINES: 12,
+    GRID_PERSPECTIVE_SCALE: 15,
+    PARTICLE_GRAVITY: 0.2,
+    PARTICLE_DRAG: 0.98,
+    GRID_ANIMATION_SPEED: 5,
+    SCANLINE_ANIMATION_SPEED: 10
+  },
+  
+  // Audio settings
+  AUDIO: {
+    ENABLED: true,
+    VOLUME: 0.5,
+    MUTED: false, // Default mute state (used when localStorage is empty)
+    TONE_VOLUME_MULTIPLIER: 0.3
   }
 };

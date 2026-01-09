@@ -9,6 +9,11 @@
   <meta name="theme-color" content="#ff00ff">
   <title>Retro Pong</title>
   
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
   
@@ -16,6 +21,7 @@
   <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
   
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations.css">
   <style>
     /* Responsive canvas scaling for mobile devices */
     #game-canvas {
@@ -35,11 +41,28 @@
   
   <script src="js/config.js"></script>
   <script src="js/utils.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/particles.js"></script>
   <script src="js/controls.js"></script>
   <script src="js/controls-mobile.js"></script>
   <script src="js/ai.js"></script>
   <script src="js/renderer.js"></script>
   <script src="js/game.js"></script>
+  
+  <!-- Font Loading Detection -->
+  <script>
+    // Check if Font Loading API is supported
+    if ('fonts' in document) {
+      document.fonts.ready.then(() => {
+        // Check if Press Start 2P font loaded successfully
+        // Use a generic size that works across different use cases
+        const loaded = document.fonts.check('12px "Press Start 2P"');
+        if (!loaded) {
+          console.warn('Press Start 2P font failed to load, using fallback fonts');
+        }
+      });
+    }
+  </script>
   
   <!-- Register Service Worker for PWA -->
   <script>

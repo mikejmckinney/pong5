@@ -9,6 +9,8 @@ class Game {
     this.controls = new Controls();
     this.mobileControls = new MobileControls(this.canvas);
     this.ai = new AI('MEDIUM');
+    this.audioManager = new AudioManager();
+    this.particleSystem = new ParticleSystem();
     
     // Game state
     this.state = 'MENU'; // MENU, PLAYING, PAUSED, GAME_OVER
@@ -54,6 +56,7 @@ class Game {
     // Track key states for one-time presses
     this.spaceWasPressed = false;
     this.escapeWasPressed = false;
+    this.muteWasPressed = false;
     
     // Track previous ball position for collision detection
     this.prevBallX = CONFIG.CANVAS_WIDTH / 2;
@@ -92,6 +95,8 @@ class Game {
     this.resetBall();
     this.ai.reset();
     this.serveDirection = 1;
+    this.particleSystem.clear();
+    this.renderer.clearBallTrail();
   }
 
   /**
@@ -126,12 +131,29 @@ class Game {
     } else {
       this.ball.x = paddle.x - this.ball.size / 2 - 1;
     }
+    
+    // Audio and particle effects
+    this.audioManager.playPaddleHit();
+    this.particleSystem.spawnDirectional(
+      this.ball.x,
+      this.ball.y,
+      CONFIG.EFFECTS.PARTICLE_COUNT,
+      CONFIG.COLORS.NEON_CYAN,
+      direction > 0 ? 0 : Math.PI,
+      60
+    );
   }
 
   /**
    * Update game state
    */
   update(deltaTime) {
+    // Handle mute toggle (available in all states)
+    if (this.controls.isMutePressed() && !this.muteWasPressed) {
+      this.audioManager.toggleMute();
+    }
+    this.muteWasPressed = this.controls.isMutePressed();
+    
     // Handle menu state
     if (this.state === 'MENU') {
       // Check for difficulty selection
@@ -141,12 +163,14 @@ class Game {
         const newDifficulty = difficulties[diffKey - 1];
         this.currentDifficulty = newDifficulty;
         this.ai.setDifficulty(newDifficulty);
+        this.audioManager.playMenuClick();
       }
       
       // Check for space to start
       if (this.controls.isSpacePressed() && !this.spaceWasPressed) {
         this.state = 'PLAYING';
         this.resetGame();
+        this.audioManager.playGameStart();
       }
       this.spaceWasPressed = this.controls.isSpacePressed();
       return;
@@ -156,6 +180,7 @@ class Game {
     if (this.state === 'GAME_OVER') {
       if (this.controls.isSpacePressed() && !this.spaceWasPressed) {
         this.state = 'MENU';
+        this.audioManager.playMenuClick();
         // Preserve serve direction alternation across game sessions
         const nextServeDirection = -this.serveDirection;
         this.resetGame();
@@ -243,10 +268,12 @@ class Game {
     if (this.ball.y - this.ball.size / 2 <= 0) {
       this.ball.y = this.ball.size / 2;
       this.ball.velocityY *= -1;
+      this.audioManager.playWallBounce();
     }
     if (this.ball.y + this.ball.size / 2 >= CONFIG.CANVAS_HEIGHT) {
       this.ball.y = CONFIG.CANVAS_HEIGHT - this.ball.size / 2;
       this.ball.velocityY *= -1;
+      this.audioManager.playWallBounce();
     }
 
     // Ball collision with paddles
@@ -279,6 +306,7 @@ class Game {
     if (this.ball.x - this.ball.size / 2 <= 0) {
       // Player 2 (AI) scores
       this.player2Score++;
+      this.audioManager.playLose();
       this.checkWinCondition();
       if (this.state !== 'GAME_OVER') {
         this.isResetting = true;
@@ -286,11 +314,22 @@ class Game {
     } else if (this.ball.x + this.ball.size / 2 >= CONFIG.CANVAS_WIDTH) {
       // Player 1 scores
       this.player1Score++;
+      this.audioManager.playScore();
+      this.particleSystem.spawn(
+        this.ball.x,
+        this.ball.y,
+        20,
+        CONFIG.COLORS.NEON_PINK,
+        5
+      );
       this.checkWinCondition();
       if (this.state !== 'GAME_OVER') {
         this.isResetting = true;
       }
     }
+    
+    // Update particle system
+    this.particleSystem.update(deltaTime);
   }
 
   /**
@@ -300,9 +339,11 @@ class Game {
     if (this.player1Score >= CONFIG.WINNING_SCORE) {
       this.winner = 'Player 1';
       this.state = 'GAME_OVER';
+      this.audioManager.playGameOver(true);
     } else if (this.player2Score >= CONFIG.WINNING_SCORE) {
       this.winner = 'AI';
       this.state = 'GAME_OVER';
+      this.audioManager.playGameOver(false);
     }
   }
 
@@ -320,7 +361,8 @@ class Game {
       winner: this.winner,
       currentDifficulty: this.currentDifficulty,
       player1TouchActive: this.mobileControls.isPlayer1Active(),
-      player2TouchActive: this.mobileControls.isPlayer2Active()
+      player2TouchActive: this.mobileControls.isPlayer2Active(),
+      particleSystem: this.particleSystem
     };
   }
 
@@ -341,7 +383,7 @@ class Game {
     this.update(deltaTime);
 
     // Render
-    this.renderer.render(this.getGameState());
+    this.renderer.render(this.getGameState(), deltaTime);
 
     // Continue loop
     requestAnimationFrame((time) => this.run(time));
