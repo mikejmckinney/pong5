@@ -55,9 +55,10 @@
     if ('fonts' in document) {
       document.fonts.ready.then(() => {
         // Check if Press Start 2P font loaded successfully
-        const loaded = document.fonts.check('16px "Press Start 2P"');
+        // Use a generic size that works across different use cases
+        const loaded = document.fonts.check('12px "Press Start 2P"');
         if (!loaded) {
-          console.warn('Press Start 2P font failed to load, using fallback font (monospace)');
+          console.warn('Press Start 2P font failed to load, using fallback fonts');
         }
       });
     }
