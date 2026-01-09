@@ -46,10 +46,7 @@ class Renderer {
     // Draw grid background if enabled
     if (CONFIG.EFFECTS.GRID_ENABLED) {
       // Update grid animation (frame-rate independent, normalized to 60fps)
-      this.gridOffset += (CONFIG.EFFECTS.GRID_ANIMATION_SPEED / 1000) * this.deltaTime;
-      if (this.gridOffset >= CONFIG.EFFECTS.GRID_SIZE) {
-        this.gridOffset = 0;
-      }
+      this.gridOffset = (this.gridOffset + (CONFIG.EFFECTS.GRID_ANIMATION_SPEED / 1000) * this.deltaTime) % CONFIG.EFFECTS.GRID_SIZE;
       this.drawGrid();
     }
     
