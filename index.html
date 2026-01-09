@@ -49,6 +49,20 @@
   <script src="js/renderer.js"></script>
   <script src="js/game.js"></script>
   
+  <!-- Font Loading Detection -->
+  <script>
+    // Check if Font Loading API is supported
+    if ('fonts' in document) {
+      document.fonts.ready.then(() => {
+        // Check if Press Start 2P font loaded successfully
+        const loaded = document.fonts.check('16px "Press Start 2P"');
+        if (!loaded) {
+          console.warn('Press Start 2P font failed to load, using fallback font (monospace)');
+        }
+      });
+    }
+  </script>
+  
   <!-- Register Service Worker for PWA -->
   <script>
     if ('serviceWorker' in navigator) {
